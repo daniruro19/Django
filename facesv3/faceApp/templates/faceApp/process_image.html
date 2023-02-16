@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+    <br>
+    coordenadas: {{ coordenadas }}
+    <br>
+    imagen: {{ imagen }}
+    <ul>
+    {% for item in lista %}
+        <li>{{ item }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+
+{% block contenido %}
+    <form method="post" enctype="multipart/form-data" name="upload_data" action="{% url 'en_face:manage_upload' %}">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="subir">
+    </form>
+{% endblock %}

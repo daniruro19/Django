@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block estilo_script %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/jcrop/dist/jcrop.css" />
+    <script src="https://unpkg.com/jcrop"></script>
+<!-- <link rel="stylesheet" href="https://unpkg.com/jcrop/dist/jcrop.css">
+<script src="https://unpkg.com/jcrop"></script> -->
+{% endblock %}
+
+{% block post_scripts %}
+<script defer>
+    const jcrop=Jcrop.attach('target',{
+        multi: true
+    });
+
+    //agregar unos crops iniciales
+    let rect = Jcrop.Rect.create(100,100,50,50);
+    jcrop.newWidget(rect, {});
+    rect= Jcrop.Rect.create(200,200,50,50);
+    jcrop.newWidget(rect, {});
+
+    function getCoordenadas() {
+        let crops= jcrop.crops;
+        let coords= [];
+        for (const crop of crops){
+            console.log(crop.pos.x,crop.pos.y,crop.pos.w,crop.pos.h);
+            coords.push([crop.pos.x,crop.pos.y,crop.pos.w,crop.pos.h]);
+        }
+        return JSON.stringify(coords);
+    }
+
+    let btAjax = document.getElementById("btAjax");
+    let formularioBlur = document.getElementById("formularioBlur");
+    let coordenadas = document.getElementById("coordenadas");
+    btAjax.addEventListener("click", function(){
+        coordenadas.value= getCoordenadas();
+        console.log(coordenadas.value);
+        console.log(JSON.parse(coordenadas.value));    
+    });
+
+    formularioBlur.addEventListener("submit", function(){
+        coordenadas.value = getCoordenadas();
+    });
+
+</script>
+{% endblock %}
+
+{% block contenido %}
+    <h1>Titulo de la imagen: {{ data.title }}</h1>
+    <h3>id de la imagen: {{ data.id }}</h3>
+    <h3>ruta de la imagen: {{ data.image.url }}</h3>
+    <img src="{{ data.image.url }}" style="max-height: 300px;" id="target"/>
+    <form id="formularioBlur" method="post" action="{% url 'en_face:process_image' %}">
+        <!--{% crsf_token %}-->
+        <input type="text" name="coordenadas" id="coordenadas">
+        <input type="text" name="imagen" id="{{ data.id }}">
+        <input type="submit" value="post tradicional">
+    </form>
+    <hr>
+    <input type="button" value="post_ajax" id="btAjax">
+    </hr>
+{% endblock %}
+
